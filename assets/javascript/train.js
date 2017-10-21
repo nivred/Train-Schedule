@@ -6,13 +6,13 @@ var config = {
     projectId: "trainschedule-92174",
     storageBucket: "trainschedule-92174.appspot.com",
     messagingSenderId: "1044131917086"
-  };
+};
 
 firebase.initializeApp(config);
 
 var database =firebase.database();
 
-$("#submit-btn").on("click", function(){
+$("#submit-btn").on("click", function(event){
 	event.preventDefault();
     console.log("I clicked Submit!");
 
@@ -41,6 +41,44 @@ $("#submit-btn").on("click", function(){
     $("#train-destination").val("");
     $("#train-start").val("");
     $("#train-frequency").val("");
+});
 
+database.ref().on("child_added", function(childSnapshot, prevChildKey) {
 
-})
+    console.log(childSnapshot.val());
+
+    // Store everything into a variable.
+    var train = childSnapshot.val().train;
+    var destination = childSnapshot.val().destination;
+    var start = childSnapshot.val().start;
+    var frequency = childSnapshot.val().frequency;
+
+    // Predictions
+    var tFrequency = frequency;
+
+    // Time is 3:30 AM
+    var firstTime = start;
+
+    // First Time (pushed back 1 year to make sure it comes before current time)
+    var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
+
+    // Current Time
+    var currentTime = moment();
+
+    // Difference between the times
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+
+    // Time apart (remainder)
+    var tRemainder = diffTime % tFrequency;
+
+    // Minute Until Train
+    var tMinutesTillTrain = tFrequency - tRemainder;
+
+    // Next Train
+    var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+
+    $("#time").html(moment(currentTime).format("hh:mm"));
+    $("#information-table > tbody").append("<tr><td>" + train + "</td><td>" + destination +
+        "</td><td>" + frequency + "</td><td>" + moment(nextTrain).format("hh:mm") + "</td><td>" + tMinutesTillTrain + "</td></tr>");
+});
+
