@@ -1,0 +1,10 @@
+.jumbotron h1, h2 {
+	color: #fff;
+}
+
+.jumbotron {
+	background-image: url("https://media.giphy.com/media/TP6iBcJgI8ZlS/giphy.gif");
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+}
