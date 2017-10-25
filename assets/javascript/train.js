@@ -10,24 +10,15 @@ var config = {
 
 firebase.initializeApp(config);
 
-var database =firebase.database();
+var database = firebase.database();
 
 $("#submit-btn").on("click", function(event){
 	event.preventDefault();
-    console.log("I clicked Submit!");
 
     var train = $("#train-name").val().trim();
-    console.log(train);
-
     var destination = $("#train-destination").val().trim();
-    console.log(destination);
-
     var start = $("#train-start").val().trim();
-    console.log(start);
-
     var frequency = $("#train-frequency").val().trim();
-    console.log(frequency);
-
     var newTrain = {
     	train: train,
     	destination: destination,
@@ -45,8 +36,6 @@ $("#submit-btn").on("click", function(event){
 
 database.ref().on("child_added", function(childSnapshot, prevChildKey) {
 
-    console.log(childSnapshot.val());
-
     // Store everything into a variable.
     var train = childSnapshot.val().train;
     var destination = childSnapshot.val().destination;
@@ -56,7 +45,7 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
     // Predictions
     var tFrequency = frequency;
 
-    // Time is 3:30 AM
+    // Initial departure time
     var firstTime = start;
 
     // First Time (pushed back 1 year to make sure it comes before current time)
@@ -77,8 +66,8 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
     // Next Train
     var nextTrain = moment().add(tMinutesTillTrain, "minutes");
 
-    $("#time").html(moment(currentTime).format("hh:mm"));
+    $("#time").html(moment(currentTime).format("hh:mm a"));
     $("#information-table > tbody").append("<tr><td>" + train + "</td><td>" + destination +
-        "</td><td>" + frequency + "</td><td>" + moment(nextTrain).format("hh:mm") + "</td><td>" + tMinutesTillTrain + "</td></tr>");
+        "</td><td>" + frequency + "</td><td>" + moment(nextTrain).format("hh:mm a") + "</td><td>" + tMinutesTillTrain + "</td></tr>");
 });
 
